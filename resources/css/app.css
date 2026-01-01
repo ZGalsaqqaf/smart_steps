@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* تغيير لون أزرار الـ pagination */
+.pagination .page-link {
+    color: #343a40; /* نص رمادي غامق */
+    border: 1px solid #343a40; /* حدود رمادي غامق */
+}
+
+.pagination .page-link:hover {
+    background-color: #343a40; /* خلفية رمادي غامق عند المرور */
+    color: #fff; /* النص أبيض */
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #343a40; /* خلفية العنصر النشط */
+    border-color: #343a40;
+    color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d; /* رمادي فاتح للمعطل */
+    border-color: #6c757d;
+}
