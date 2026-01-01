@@ -31,7 +31,7 @@ class QuestionController extends Controller
         }
 
         // $questions = $query->get();
-        $questions = $query->paginate(5);
+        $questions = $query->paginate(10);
         $grades = Grade::all();
         $categories = Category::all();
 

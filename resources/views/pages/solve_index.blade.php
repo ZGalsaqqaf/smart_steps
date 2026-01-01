@@ -43,18 +43,27 @@
         <button id="submitAnswer" class="btn btn-lg btn-warning mt-4">Submit Answer 🚀</button>
     </div>
 
+    <!-- Overlay للنتيجة -->
+    <div id="resultOverlay" class="overlay d-none">
+        <div class="overlay-content">
+            <h1 id="resultMessage"></h1>
+            <p id="resultPoints"></p>
+            <button onclick="hideOverlay()" class="btn btn-light">Continue</button>
+        </div>
+    </div>
+
     <style>
         /* عجلة صغيرة ممتعة */
         .wheel {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: conic-gradient(#fde68a, #fff3bf, #fff8e1, #fde68a);
             margin: auto;
         }
 
         .wheel.spin {
-            animation: spin 1.5s ease-out;
+            animation: spin 1.2s ease-out;
         }
 
         @keyframes spin {
@@ -65,6 +74,33 @@
             to {
                 transform: rotate(720deg);
             }
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .overlay-content {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .overlay-content h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
         }
     </style>
 
@@ -97,20 +133,20 @@
 
             if (q.type === 'true_false') {
                 container.innerHTML = `
-          <div>
-            <label><input type="radio" name="answer" value="True"> True ✅</label><br>
-            <label><input type="radio" name="answer" value="False"> False ❌</label>
-          </div>`;
+                    <div>
+                        <label><input type="radio" name="answer" value="True"> True ✅</label><br>
+                        <label><input type="radio" name="answer" value="False"> False ❌</label>
+                    </div>`;
             } else if (q.type === 'multiple_choice') {
                 q.options.forEach((opt, i) => {
                     container.innerHTML += `
-            <div>
-              <label><input type="radio" name="answer" value="${opt.text}"> ${opt.text}</label>
-            </div>`;
+                        <div>
+                            <label><input type="radio" name="answer" value="${opt.text}"> ${opt.text}</label>
+                        </div>`;
                 });
             } else if (q.type === 'fill_blank' || q.type === 'fix_answer') {
                 container.innerHTML =
-                    `<input type="text" name="answer" class="form-control" placeholder="Write your answer here">`;
+                    `<textarea name="answer" class="form-control" rows="3" placeholder="Write your answer here"></textarea>`;
             }
         }
 
@@ -121,11 +157,16 @@
             if (chosenManual) {
                 studentId = chosenManual;
             } else {
+                const qId = document.getElementById('questionSelect').value;
                 const res = await fetch(`/pages/grade/${gradeId}/pick-student`, {
                     method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
+                    },
+                    body: JSON.stringify({
+                        question_id: qId
+                    })
                 });
                 const data = await res.json();
                 studentId = data.student_id;
@@ -140,7 +181,7 @@
                 wheel.classList.remove('spin');
                 document.getElementById('winnerName').textContent = students[studentId];
                 document.getElementById('studentSelect').value = studentId;
-            }, 1600);
+            }, 1300);
         };
 
         // إرسال الإجابة
@@ -151,7 +192,7 @@
                 '[name="answer"]')?.value;
 
             if (!qId || !sId || !answer) {
-                alert('Please select question, student, and answer.');
+                showOverlay('⚠️ Please select question, student, and answer.', '');
                 return;
             }
 
@@ -168,7 +209,27 @@
                 })
             });
             const data = await res.json();
-            alert(`${data.message}\nPoints: ${data.earned_points}`);
+
+            showOverlay(data.message, `Points: ${data.earned_points}`);
+
+            // إذا كانت الإجابة صحيحة نحذف السؤال من القائمة
+            if (data.is_correct) {
+                const idx = questions.findIndex(q => q.id == qId);
+                if (idx !== -1) questions.splice(idx, 1); // نحذف من المصفوفة
+                document.querySelector(`#questionSelect option[value="${qId}"]`)?.remove(); // نحذف من القائمة
+                document.getElementById('questionArea').classList.add('d-none'); // نخفي مربع السؤال
+            }
         };
+
+        // Overlay functions
+        function showOverlay(message, points) {
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultPoints').textContent = points;
+            document.getElementById('resultOverlay').classList.remove('d-none');
+        }
+
+        function hideOverlay() {
+            document.getElementById('resultOverlay').classList.add('d-none');
+        }
     </script>
 @endsection

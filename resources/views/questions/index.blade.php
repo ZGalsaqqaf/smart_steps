@@ -4,6 +4,8 @@
     <div class="container mt-4">
         <h2 class="text-primary mb-4">📚 All Questions</h2>
 
+        <a href="{{ route('questions.create') }}" class="btn btn-success">➕ Add New Question</a>
+        <br><br>
         <!-- Filters -->
         <form method="GET" action="{{ route('questions.index') }}" class="row g-3 mb-4">
             <div class="col-md-3">
@@ -36,7 +38,8 @@
                 <select name="category_id" class="form-control">
                     <option value="">-- All --</option>
                     @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                        <option value="{{ $category->id }}"
+                            {{ request('category_id') == $category->id ? 'selected' : '' }}>
                             {{ $category->name }}
                         </option>
                     @endforeach
@@ -100,6 +103,5 @@
         </div>
 
 
-        <a href="{{ route('questions.create') }}" class="btn btn-success">➕ Add New Question</a>
     </div>
 @endsection

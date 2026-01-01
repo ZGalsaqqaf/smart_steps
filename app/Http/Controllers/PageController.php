@@ -26,17 +26,17 @@ class PageController extends Controller
     }
 
     public function leaderboard(Grade $grade)
-{
-    $students = $grade->students()->with('attempts')->get()
-        ->sortByDesc(fn($s) => $s->totalPoints())
-        ->values(); // مهم: يعيد الفهارس من 0,1,2...
-    
-    return view('pages.leaderboard', compact('grade', 'students'));
-}
+    {
+        $students = $grade->students()->with('attempts')->get()
+            ->sortByDesc(fn($s) => $s->totalPoints())
+            ->values(); // مهم: يعيد الفهارس من 0,1,2...
+
+        return view('pages.leaderboard', compact('grade', 'students'));
+    }
 
     public function exercises(Grade $grade, $date)
     {
-        $attempts = \App\Models\Attempt::whereHas('student', fn($q) => $q->where('grade_id', $grade->id))
+        $attempts = Attempt::whereHas('student', fn($q) => $q->where('grade_id', $grade->id))
             ->whereDate('created_at', $date)
             ->with(['question', 'student'])
             ->get();
@@ -58,39 +58,25 @@ class PageController extends Controller
     }
 
     // في PageController
-    public function pickStudentWeighted(Grade $grade)
+    public function pickStudentWeighted(Grade $grade, Request $request)
     {
-        $students = $grade->students()->with(['attempts' => function ($q) {
-            $q->whereDate('created_at', '>=', now()->subDays(7));
-        }])->get();
+        $questionId = $request->input('question_id'); // نرسل السؤال من الـ JS
+        $students = $grade->students()->pluck('id')->toArray();
 
-        // آخر مشاركة في هذا الصف
-        $lastAttempt = \App\Models\Attempt::whereHas('student', fn($q) => $q->where('grade_id', $grade->id))
-            ->latest('created_at')->first();
+        $key = "picked_students_{$grade->id}_{$questionId}";
+        $alreadyPicked = session()->get($key, []);
 
-        $weights = [];
-        foreach ($students as $s) {
-            $base = 1.0;
-            $recentAttemptsCount = $s->attempts->count();               // محاولات آخر 7 أيام
-            $penalty = 0.15 * $recentAttemptsCount;                     // خصم بسيط لكل محاولة حديثة
-            $bonus = ($lastAttempt && $lastAttempt->student_id !== $s->id) ? 0.20 : 0.0; // نقطة لمن لم يكن آخر مختار
-            $weight = max(0.10, $base - $penalty + $bonus);             // لا تقل عن 0.10
+        $available = array_diff($students, $alreadyPicked);
 
-            $weights[] = ['id' => $s->id, 'name' => $s->name, 'w' => $weight];
+        if (empty($available)) {
+            $alreadyPicked = [];
+            $available = $students;
         }
 
-        // اختيار عشوائي حسب الوزن
-        $sum = array_sum(array_column($weights, 'w'));
-        $r = mt_rand() / mt_getrandmax() * $sum;
-        $acc = 0;
-        $chosen = $weights[0]['id'];
-        foreach ($weights as $item) {
-            $acc += $item['w'];
-            if ($r <= $acc) {
-                $chosen = $item['id'];
-                break;
-            }
-        }
+        $chosen = $available[array_rand($available)];
+
+        $alreadyPicked[] = $chosen;
+        session()->put($key, $alreadyPicked);
 
         return response()->json(['student_id' => $chosen]);
     }
@@ -103,7 +89,7 @@ class PageController extends Controller
         return view('pages.solve_index', compact('grade', 'questions', 'students'));
     }
 
-    public function solveShow(\App\Models\Question $question, \Illuminate\Http\Request $request)
+    public function solveShow(\App\Models\Question $question, Request $request)
     {
         $studentId = $request->query('student_id');
         $student   = $studentId ? \App\Models\Student::find($studentId) : null;

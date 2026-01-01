@@ -32,23 +32,6 @@
         }
     </style>
 
-    <div class="row mt-3 mb-5">
-        @forelse($todaysQuestions as $question)
-            <div class="col-md-6 mb-3">
-                <div class="card border-primary shadow-sm">
-                    <div class="card-body">
-                        <p class="card-text">{{ $question->text }}</p>
-                        <a href="{{ route('pages.solve', $question->id) }}" class="btn btn-primary">
-                            Solve Now 🚀
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @empty
-            <p class="text-center text-muted">No questions for today. 🌸</p>
-        @endforelse
-    </div>
-
     <h4 class="text-secondary mt-4">📅 Previous Exercises</h4>
     <div class="row">
         @forelse($previousExercises as $exercise)
