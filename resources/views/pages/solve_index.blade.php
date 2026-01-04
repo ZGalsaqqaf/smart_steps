@@ -152,12 +152,13 @@
 
         // اختيار الطالب بالعجلة
         document.getElementById('spinWheel').onclick = async () => {
+            const qId = document.getElementById('questionSelect').value;
             const chosenManual = document.getElementById('studentSelect').value;
             let studentId;
+
             if (chosenManual) {
                 studentId = chosenManual;
             } else {
-                const qId = document.getElementById('questionSelect').value;
                 const res = await fetch(`/pages/grade/${gradeId}/pick-student`, {
                     method: 'POST',
                     headers: {
@@ -166,12 +167,13 @@
                     },
                     body: JSON.stringify({
                         question_id: qId
-                    })
+                    }) // مهم: نرسل السؤال
                 });
                 const data = await res.json();
                 studentId = data.student_id;
             }
 
+            // تحديث العرض كل مرة
             const wheel = document.createElement('div');
             wheel.className = 'wheel spin';
             document.getElementById('winnerName').innerHTML = '';
@@ -183,7 +185,7 @@
                 document.getElementById('studentSelect').value = studentId;
             }, 1300);
         };
-
+        
         // إرسال الإجابة
         document.getElementById('submitAnswer').onclick = async () => {
             const qId = document.getElementById('questionSelect').value;

@@ -36,11 +36,11 @@
     <div class="row">
         @forelse($previousExercises as $exercise)
             <div class="col-md-3 mb-3">
-                <a href="{{ route('pages.exercises', [$grade->id, $exercise->created_at->toDateString()]) }}"
+                <a href="{{ route('pages.exercises', [$grade->id, $exercise->date]) }}"
                     class="card text-center text-decoration-none shadow-sm border-info">
                     <div class="card-body">
                         <h5 class="card-title text-info">
-                            {{ $exercise->created_at->format('d M Y') }}
+                            {{ \Carbon\Carbon::parse($exercise->date)->format('d M Y') }}
                         </h5>
                         <p class="text-muted">View solved questions</p>
                     </div>

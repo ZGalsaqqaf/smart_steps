@@ -12,8 +12,9 @@ class PageController extends Controller
     {
         // التمارين السابقة (من جدول attempts)
         $previousExercises = Attempt::whereHas('student', fn($q) => $q->where('grade_id', $grade->id))
-            ->with('question')
-            ->orderBy('created_at', 'desc')
+            ->selectRaw('DATE(created_at) as date')
+            ->groupBy('date')
+            ->orderBy('date', 'desc')
             ->take(10)
             ->get();
 

@@ -2,7 +2,7 @@
 
 @section('content')
     <h2 class="text-info">
-        📅 Exercises for {{ $grade->name }} on {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
+        📅 Exercises for {{ $grade->name }}th grade on {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
     </h2>
 
     <div class="list-group mt-4">
