@@ -6,6 +6,7 @@
     <title>Smart Steps</title>
     <!-- Bootstrap Offline -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
     <style>
         html,
         body {
@@ -61,6 +62,10 @@
 
     <!-- Bootstrap Offline -->
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <!-- jQuery Offline -->
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+
+    <script src="{{ asset('js/select2.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
 </body>
 

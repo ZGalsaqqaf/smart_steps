@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
 </head>
 
 <body>
@@ -32,6 +33,7 @@
     <!-- Scripts -->
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('js/select2.min.js') }}"></script>
 
     <!-- Toast Notifications للنجاح والخطأ -->
     <script>
@@ -77,6 +79,7 @@
             })
         }
     </script>
+
 </body>
 
 </html>

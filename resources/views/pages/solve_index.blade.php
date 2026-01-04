@@ -4,7 +4,7 @@
     <h2 class="text-primary">📝 Solve - {{ $grade->name }}th Grade</h2>
 
     <div class="row mt-4">
-        <!-- Choose Question (أكبر مساحة) -->
+        <!-- Choose Question -->
         <div class="col-md-8">
             <div class="card p-3 h-100">
                 <h5>Choose Question</h5>
@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <!-- Choose Student (أصغر مساحة) -->
+        <!-- Choose Student -->
         <div class="col-md-4">
             <div class="card p-3 h-100">
                 <h5>Choose Student</h5>
@@ -105,6 +105,16 @@
     </style>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            $('#studentSelect').select2({
+                placeholder: "🔍 Search student...",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+
+    <script>
         const questions = @json($questions);
         const students = @json($students->pluck('name', 'id'));
         const gradeId = {{ $grade->id }};
@@ -185,7 +195,7 @@
                 document.getElementById('studentSelect').value = studentId;
             }, 1300);
         };
-        
+
         // إرسال الإجابة
         document.getElementById('submitAnswer').onclick = async () => {
             const qId = document.getElementById('questionSelect').value;
