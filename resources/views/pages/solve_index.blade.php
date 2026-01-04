@@ -38,7 +38,7 @@
 
     <!-- مربع الإجابة -->
     <div id="questionArea" class="card p-5 mt-4 d-none" style="background: #fdf6e3; border: 2px solid #f1c40f;">
-        <h4 id="questionText" class="text-info mb-4"></h4>
+        <h4 id="questionText" class="text-dark mb-4"></h4>
         <div id="questionOptions" class="mt-3"></div>
         <button id="submitAnswer" class="btn btn-lg btn-warning mt-4">Submit Answer 🚀</button>
     </div>
@@ -53,6 +53,29 @@
     </div>
 
     <style>
+        .option-card {
+            padding: 20px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1.2rem;
+            background: #fdfdfd;
+            transition: all 0.2s ease;
+        }
+
+        .option-card.selected {
+            background: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+
+        .option-card:hover {
+            background: rgba(241, 241, 241, 0.63);
+            border-color: #007bff;
+        }
+
         /* عجلة صغيرة ممتعة */
         .wheel {
             width: 80px;
@@ -200,8 +223,15 @@
         document.getElementById('submitAnswer').onclick = async () => {
             const qId = document.getElementById('questionSelect').value;
             const sId = document.getElementById('studentSelect').value;
-            const answer = document.querySelector('[name="answer"]:checked')?.value || document.querySelector(
-                '[name="answer"]')?.value;
+            let answer;
+
+            // إذا السؤال اختياري (cards)
+            answer = document.getElementById('questionOptions').dataset.selected;
+
+            // إذا السؤال نصي (textarea)
+            if (!answer) {
+                answer = document.querySelector('[name="answer"]')?.value;
+            }
 
             if (!qId || !sId || !answer) {
                 showOverlay('⚠️ Please select question, student, and answer.', '');
@@ -224,15 +254,18 @@
 
             showOverlay(data.message, `Points: ${data.earned_points}`);
 
-            // إذا كانت الإجابة صحيحة نحذف السؤال من القائمة
             if (data.is_correct) {
                 const idx = questions.findIndex(q => q.id == qId);
-                if (idx !== -1) questions.splice(idx, 1); // نحذف من المصفوفة
-                document.querySelector(`#questionSelect option[value="${qId}"]`)?.remove(); // نحذف من القائمة
-                document.getElementById('questionArea').classList.add('d-none'); // نخفي مربع السؤال
-            }
-        };
+                if (idx !== -1) questions.splice(idx, 1);
+                document.querySelector(`#questionSelect option[value="${qId}"]`)?.remove();
+                document.getElementById('questionArea').classList.add('d-none');
 
+                // 🟢 تفريغ اختيار الطالبة بعد الإجابة الصحيحة
+                document.getElementById('studentSelect').value = ""; // يرجع للقيمة الافتراضية "Auto"
+                document.getElementById('winnerName').textContent = ""; // يمسح اسم الطالبة من العرض
+            }
+
+        };
         // Overlay functions
         function showOverlay(message, points) {
             document.getElementById('resultMessage').textContent = message;
@@ -242,6 +275,41 @@
 
         function hideOverlay() {
             document.getElementById('resultOverlay').classList.add('d-none');
+        }
+
+        function renderQuestion(q) {
+            document.getElementById('questionArea').classList.remove('d-none');
+            document.getElementById('questionText').textContent = q.text;
+            const container = document.getElementById('questionOptions');
+            container.innerHTML = '';
+
+            if (q.type === 'true_false') {
+                container.innerHTML = `
+            <div class="option-card" data-value="True">✅ True</div>
+            <div class="option-card" data-value="False">❌ False</div>
+        `;
+            } else if (q.type === 'multiple_choice') {
+                q.options.forEach(opt => {
+                    container.innerHTML += `
+                <div class="option-card" data-value="${opt.text}">${opt.text}</div>
+            `;
+                });
+            } else if (q.type === 'fill_blank' || q.type === 'fix_answer') {
+                container.innerHTML =
+                    `<textarea name="answer" class="form-control" rows="3" placeholder="Write your answer here"></textarea>`;
+            }
+
+            // إضافة حدث للنقر على المربعات
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.onclick = () => {
+                    // إزالة التحديد من البقية
+                    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                    // تحديد الحالي
+                    card.classList.add('selected');
+                    // حفظ القيمة المختارة في dataset
+                    container.dataset.selected = card.dataset.value;
+                };
+            });
         }
     </script>
 @endsection
