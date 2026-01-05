@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attempt;
 use App\Models\Grade;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -26,13 +27,34 @@ class PageController extends Controller
         return view('pages.grade', compact('grade', 'previousExercises', 'todaysQuestions'));
     }
 
-    public function leaderboard(Grade $grade)
+    public function leaderboard(Grade $grade, Request $request)
     {
-        $students = $grade->students()->with('attempts')->get()
-            ->sortByDesc(fn($s) => $s->totalPoints())
-            ->values(); // مهم: يعيد الفهارس من 0,1,2...
+        // جلب كل الأيام التي فيها محاولات
+        $dates = Attempt::whereHas('student', fn($q) => $q->where('grade_id', $grade->id))
+            ->selectRaw('DATE(created_at) as date')
+            ->groupBy('date')
+            ->orderBy('date', 'desc')
+            ->get();
 
-        return view('pages.leaderboard', compact('grade', 'students'));
+        $selectedDate = $request->input('date');
+
+        if ($selectedDate) {
+            // النقاط حسب اليوم المحدد فقط
+            $students = Student::where('grade_id', $grade->id)
+                ->withSum(['attempts as points' => function ($q) use ($selectedDate) {
+                    $q->whereDate('created_at', $selectedDate);
+                }], 'earned_points')
+                ->orderByDesc('points')
+                ->get();
+        } else {
+            // النقاط الكلية (الوضع الافتراضي)
+            $students = Student::where('grade_id', $grade->id)
+                ->withSum('attempts as points', 'earned_points')
+                ->orderByDesc('points')
+                ->get();
+        }
+
+        return view('pages.leaderboard', compact('grade', 'students', 'dates', 'selectedDate'));
     }
 
     public function exercises(Grade $grade, $date)
