@@ -31,7 +31,7 @@ class QuestionController extends Controller
         }
 
         // $questions = $query->get();
-        $questions = $query->paginate(10);
+        $questions = $query->orderBy('created_at', 'desc')->paginate(10);
         $grades = Grade::all();
         $categories = Category::all();
 
@@ -59,11 +59,12 @@ class QuestionController extends Controller
             'type' => 'required|string',
             'grade_id' => 'required|exists:grades,id',
             'category_id' => 'required|exists:categories,id',
+            'default_points' => 'required|integer',
         ]);
 
         DB::beginTransaction();
         try {
-            $question = Question::create($request->only('text', 'type', 'category', 'grade_id', 'category_id'));
+            $question = Question::create($request->only('text', 'type', 'category', 'grade_id', 'category_id', 'default_points'));
 
             if ($request->type === 'true_false') {
                 Option::create([
@@ -138,12 +139,12 @@ class QuestionController extends Controller
             'type' => 'required|string',
             'grade_id' => 'required|exists:grades,id',
             'category_id' => 'required|exists:categories,id',
-
+            'default_points' => 'required|integer',
         ]);
 
         DB::beginTransaction();
         try {
-            $question->update($request->only('text', 'type', 'category', 'grade_id', 'category_id'));
+            $question->update($request->only('text', 'type', 'category', 'grade_id', 'category_id', 'default_points'));
 
             // نحذف الخيارات القديمة ونضيف الجديدة
             $question->options()->delete();

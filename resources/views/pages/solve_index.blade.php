@@ -157,7 +157,7 @@
             if (q) renderQuestion(q);
         };
 
-       
+
         // اختيار الطالب بالعجلة
         document.getElementById('spinWheel').onclick = async () => {
             const qId = document.getElementById('questionSelect').value;
@@ -229,16 +229,17 @@
 
             showOverlay(data.message, `Points: ${data.earned_points}`);
 
-            if (data.is_correct) {
+            // ✅ هنا التعديل
+            if (data.is_correct || data.question_inactive) {
+                // إذا الإجابة صحيحة أو السيرفر قال إن السؤال انتهى
                 const idx = questions.findIndex(q => q.id == qId);
                 if (idx !== -1) questions.splice(idx, 1);
                 document.querySelector(`#questionSelect option[value="${qId}"]`)?.remove();
                 document.getElementById('questionArea').classList.add('d-none');
-
-                // 🟢 تفريغ اختيار الطالبة بعد الإجابة الصحيحة
-                document.getElementById('studentSelect').value = ""; // يرجع للقيمة الافتراضية "Auto"
-                document.getElementById('winnerName').textContent = ""; // يمسح اسم الطالبة من العرض
+                document.getElementById('studentSelect').value = "";
+                document.getElementById('winnerName').textContent = "";
             }
+
 
         };
         // Overlay functions
