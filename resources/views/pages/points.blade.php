@@ -17,8 +17,8 @@
         @endif
 
 
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+        @if (session('danger'))
+            <div class="alert alert-danger">{{ session('danger') }}</div>
         @endif
 
         <table class="table table-bordered table-striped">
@@ -28,7 +28,8 @@
                     <th>👩‍🎓 Student</th>
                     <th>Grade</th>
                     <th>Current Points</th>
-                    <th>Actions</th>
+                    <th>Add</th>
+                    <th>Reduce</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,6 +45,14 @@
                                 <input type="number" name="points" value="1" min="1" max="5"
                                     step="1" class="form-control d-inline w-25">
                                 <button type="submit" class="btn btn-success btn-sm">➕ Add</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ route('points.reduce', $student->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                <input type="number" name="reducePoints" value="-1" min="-3" max="-1"
+                                    step="1" class="form-control d-inline w-25">
+                                <button type="submit" class="btn btn-danger btn-sm">➖ Reduce</button>
                             </form>
                         </td>
                     </tr>

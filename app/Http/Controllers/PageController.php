@@ -147,4 +147,18 @@ class PageController extends Controller
 
         return back()->with('success', "Added {$points} points to {$student->name}");
     }
+    public function reducePoints(Request $request, Student $student)
+    {
+        $points = $request->input('reducePoints', 1);
+
+        Attempt::create([
+            'student_id' => $student->id,
+            'question_id' => null,
+            'answer' => 'manual',
+            'is_correct' => true,
+            'earned_points' => $points,
+        ]);
+
+        return back()->with('danger', "Reduce {$points} points from {$student->name}");
+    }
 }

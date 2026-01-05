@@ -54,3 +54,4 @@ Route::get('/points/{grade}', [PageController::class, 'points'])->name('points.i
 
 // إضافة نقاط لطالب محدد
 Route::post('/points/add/{student}', [PageController::class, 'addPoints'])->name('points.add');
+Route::post('/points/reduce/{student}', [PageController::class, 'reducePoints'])->name('points.reduce');
