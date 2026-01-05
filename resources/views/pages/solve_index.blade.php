@@ -38,6 +38,13 @@
 
     <!-- مربع الإجابة -->
     <div id="questionArea" class="card p-5 mt-4 d-none" style="background: #fdf6e3; border: 2px solid #f1c40f;">
+
+        <div id="questionPoints"
+            style="position: absolute; top: 15px; right: 20px; 
+                background: #f1c40f; color: #000; 
+                padding: 6px 12px; border-radius: 8px; 
+                font-weight: bold; box-shadow: 0 0 8px rgba(0,0,0,0.2);">
+        </div>
         <h4 id="questionText" class="text-dark mb-4"></h4>
         <div id="questionOptions" class="mt-3"></div>
         <button id="submitAnswer" class="btn btn-lg btn-warning mt-4">Submit Answer 🚀</button>
@@ -106,7 +113,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -136,6 +143,8 @@
             });
         });
     </script>
+
+    <script src="{{ asset('js/confetti.min.js') }}"></script>
 
     <script>
         const questions = @json($questions);
@@ -247,6 +256,20 @@
             document.getElementById('resultMessage').textContent = message;
             document.getElementById('resultPoints').textContent = points;
             document.getElementById('resultOverlay').classList.remove('d-none');
+
+            // ✅ إذا كانت الإجابة صحيحة نطلق القصاصات
+            if (message.includes('Correct')) {
+                confetti({
+                    particleCount: 300, // ✅ عدد أكبر من القصاصات
+                    startVelocity: 45, // ✅ سرعة البداية أعلى
+                    spread: 160, // ✅ مساحة انفجار واسعة جدًا
+                    scalar: 1.6, // ✅ حجم أكبر للقصاصات
+                    origin: {
+                        y: 0.6
+                    }, // ✅ نقطة الانطلاق من منتصف الشاشة
+                    colors: ['#ff0', '#0f0', '#00f', '#f0f', '#0ff', '#f00'] // ألوان زاهية
+                });
+            }
         }
 
         function hideOverlay() {
@@ -256,6 +279,10 @@
         function renderQuestion(q) {
             document.getElementById('questionArea').classList.remove('d-none');
             document.getElementById('questionText').textContent = q.text;
+
+            // ✅ عرض النقاط في الأعلى يمين
+            document.getElementById('questionPoints').textContent = `Points: ${q.default_points}`;
+
             const container = document.getElementById('questionOptions');
             container.innerHTML = '';
 
