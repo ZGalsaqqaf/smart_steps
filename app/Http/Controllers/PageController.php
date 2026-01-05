@@ -156,7 +156,7 @@ class PageController extends Controller
             'question_id' => null,
             'answer' => 'manual',
             'is_correct' => true,
-            'earned_points' => $points,
+            'earned_points' => -$points,
         ]);
 
         return back()->with('danger', "Reduce {$points} points from {$student->name}");

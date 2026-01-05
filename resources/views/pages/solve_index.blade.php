@@ -157,32 +157,7 @@
             if (q) renderQuestion(q);
         };
 
-        // عرض السؤال حسب نوعه
-        function renderQuestion(q) {
-            document.getElementById('questionArea').classList.remove('d-none');
-            document.getElementById('questionText').textContent = q.text;
-            const container = document.getElementById('questionOptions');
-            container.innerHTML = '';
-
-            if (q.type === 'true_false') {
-                container.innerHTML = `
-                    <div>
-                        <label><input type="radio" name="answer" value="True"> True ✅</label><br>
-                        <label><input type="radio" name="answer" value="False"> False ❌</label>
-                    </div>`;
-            } else if (q.type === 'multiple_choice') {
-                q.options.forEach((opt, i) => {
-                    container.innerHTML += `
-                        <div>
-                            <label><input type="radio" name="answer" value="${opt.text}"> ${opt.text}</label>
-                        </div>`;
-                });
-            } else if (q.type === 'fill_blank' || q.type === 'fix_answer') {
-                container.innerHTML =
-                    `<textarea name="answer" class="form-control" rows="3" placeholder="Write your answer here"></textarea>`;
-            }
-        }
-
+       
         // اختيار الطالب بالعجلة
         document.getElementById('spinWheel').onclick = async () => {
             const qId = document.getElementById('questionSelect').value;
