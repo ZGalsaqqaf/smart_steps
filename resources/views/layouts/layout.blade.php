@@ -14,15 +14,25 @@
             margin: 0;
             background-color: #f9f9f9;
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            /* ظل أزرق من الجوانب والأسفل */
-            box-shadow: inset 0 -15px 25px rgba(13, 202, 240, 0.4),
-                /* أسفل */
-                inset -15px 0 25px rgba(13, 202, 240, 0.4),
-                /* يمين */
-                inset 15px 0 25px rgba(13, 202, 240, 0.4);
-            /* يسار */
         }
 
+        /* عنصر وهمي يغطي الشاشة ويضع الظل */
+        body::before {
+            content: "";
+            position: fixed;
+            /* ثابت على الشاشة */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            /* لا يتداخل مع التفاعل */
+            box-shadow: inset 0 -15px 25px rgba(13, 202, 240, 0.4),
+                inset -15px 0 25px rgba(13, 202, 240, 0.4),
+                inset 15px 0 25px rgba(13, 202, 240, 0.4);
+            z-index: 9999;
+            /* فوق كل شيء */
+        }
 
         nav {
             margin-bottom: 20px;
