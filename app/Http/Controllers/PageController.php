@@ -119,4 +119,32 @@ class PageController extends Controller
 
         return view('pages.solve', compact('question', 'student'));
     }
+
+    public function points(Grade $grade, Request $request)
+    {
+        $query = Student::where('grade_id', $grade->id)->with('grade');
+
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $students = $query->orderBy('name')->get();
+
+        return view('pages.points', compact('students', 'grade'));
+    }
+
+    public function addPoints(Request $request, Student $student)
+    {
+        $points = $request->input('points', 1);
+
+        Attempt::create([
+            'student_id' => $student->id,
+            'question_id' => null,
+            'answer' => 'manual',
+            'is_correct' => true,
+            'earned_points' => $points,
+        ]);
+
+        return back()->with('success', "Added {$points} points to {$student->name}");
+    }
 }

@@ -30,7 +30,7 @@ Route::resource('grades', GradeController::class);
 Route::resource('students', StudentController::class);
 Route::resource('questions', QuestionController::class);
 Route::resource('options', OptionController::class);
-Route::resource('attempts', AttemptController::class)->only(['index','store']);
+Route::resource('attempts', AttemptController::class)->only(['index', 'store']);
 Route::resource('categories', CategoryController::class);
 
 Route::get('/pages/grade/{grade}', [PageController::class, 'gradePage'])->name('pages.grade');
@@ -48,3 +48,9 @@ Route::post('/pages/grade/{grade}/pick-student', [PageController::class, 'pickSt
 // مسار حل سؤال لطالبة معينة (واجهة العرض/الاختبار الفعلية)
 Route::get('/pages/solve/{question}', [PageController::class, 'solveShow'])
     ->name('pages.solve'); // يعتمد على ?student_id=
+
+    // عرض صفحة النقاط
+Route::get('/points/{grade}', [PageController::class, 'points'])->name('points.index');
+
+// إضافة نقاط لطالب محدد
+Route::post('/points/add/{student}', [PageController::class, 'addPoints'])->name('points.add');

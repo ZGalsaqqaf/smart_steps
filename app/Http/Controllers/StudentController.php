@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attempt;
 use App\Models\Grade;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -94,5 +95,23 @@ class StudentController extends Controller
     {
         $student->delete();
         return redirect()->route('students.index')->with('success', 'Student deleted successfully!');
+    }
+
+    public function addPoints(Request $request, Student $student)
+    {
+        $points = $request->input('points', 1); // افتراضي نقطة واحدة
+
+        Attempt::create([
+            'student_id' => $student->id,
+            'question_id' => null,
+            'answer' => 'manual',
+            'is_correct' => true,
+            'earned_points' => $points,
+        ]);
+
+        return response()->json([
+            'message' => "Added {$points} points to {$student->name}",
+            'new_total' => $student->totalPoints(),
+        ]);
     }
 }

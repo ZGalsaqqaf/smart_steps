@@ -3,6 +3,14 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-info">📚 {{ $grade->name }}th Grade</h2>
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- زر يقود إلى لوحة المتصدرات الخاصة بالصف -->
+        <a href="{{ route('points.index', $grade->id) }}" class="btn btn-outline-success">
+            ➕ Add Points
+        </a>
         <!-- زر يقود إلى لوحة المتصدرات الخاصة بالصف -->
         <a href="{{ route('pages.leaderboard', $grade->id) }}" class="btn btn-outline-success">
             🏆 View Leaderboard
@@ -27,6 +35,19 @@
         }
 
         .todays-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        }
+
+        /* add points box style */
+        .points-card {
+            transition: transform .25s ease, box-shadow .25s ease;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #fce4ec 0%, #ffffff 100%);
+            /* لون فاتح مميز */
+        }
+
+        .points-card:hover {
             transform: translateY(-4px) scale(1.02);
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
         }
