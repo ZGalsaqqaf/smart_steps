@@ -27,8 +27,8 @@
             <tr>
                 <th style="width: 60px;">#</th> {{-- عمود ضيق --}}
                 <th>👩‍🎓 Student</th>
-                <th>⭐ Points S</th>
                 <th>⭐ Points</th>
+                {{-- <th>⭐ Points</th> --}}
             </tr>
         </thead>
         <tbody>
@@ -46,7 +46,7 @@
                     </td>
                     <td>{{ $student->name }}</td>
                     <td>{{ $student->points ?? 0 }}</td>
-                    <td>{{ $student->totalPoints() }}</td>
+                    {{-- <td>{{ $student->totalPoints() }}</td> --}}
                 </tr>
             @empty
                 <tr>

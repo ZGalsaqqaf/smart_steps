@@ -50,7 +50,7 @@ class AttemptController extends Controller
         }
 
         // حساب النقاط (مثلاً 5 نقاط للسؤال الصحيح)
-        $earnedPoints = $isCorrect ? ($question->points ?? 5) : 0;
+        $earnedPoints = $isCorrect ? ($question->default_points ?? 5) : 0;
         Attempt::create([
             'student_id'    => $request->student_id,
             'question_id'   => $request->question_id,
