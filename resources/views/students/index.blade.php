@@ -4,6 +4,14 @@
     <div class="container mt-4">
         <h2 class="text-primary mb-4">👩‍🎓 All Students</h2>
 
+        <div class="mb-3 d-flex justify-content-between">
+            <a href="{{ route('students.create') }}" class="btn btn-success">➕ Add New Student</a>
+
+            <a href="{{ route('students.import') }}" class="btn btn-warning">
+                📥 Import Students
+            </a>
+        </div>
+
         <div class="mb-3">
             <form method="GET" action="{{ route('students.index') }}" class="d-flex gap-2">
                 <!-- فلتر حسب grade -->
@@ -67,6 +75,5 @@
             {{ $students->links() }}
         </div>
 
-        <a href="{{ route('students.create') }}" class="btn btn-success">➕ Add New Student</a>
     </div>
 @endsection

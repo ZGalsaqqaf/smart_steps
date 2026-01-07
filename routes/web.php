@@ -49,9 +49,14 @@ Route::post('/pages/grade/{grade}/pick-student', [PageController::class, 'pickSt
 Route::get('/pages/solve/{question}', [PageController::class, 'solveShow'])
     ->name('pages.solve'); // يعتمد على ?student_id=
 
-    // عرض صفحة النقاط
+// عرض صفحة النقاط
 Route::get('/points/{grade}', [PageController::class, 'points'])->name('points.index');
 
 // إضافة نقاط لطالب محدد
 Route::post('/points/add/{student}', [PageController::class, 'addPoints'])->name('points.add');
 Route::post('/points/reduce/{student}', [PageController::class, 'reducePoints'])->name('points.reduce');
+
+Route::get('/import', [StudentController::class, 'showImportForm'])->name('students.import');
+// تنفيذ الاستيراد بعد رفع الملف
+Route::post('/students/import-csv', [StudentController::class, 'importCSV'])->name('students.import.csv');
+
