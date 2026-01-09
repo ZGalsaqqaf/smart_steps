@@ -67,7 +67,7 @@
 
     <!-- Footer -->
     <footer class="text-center mt-4 mb-2 text-muted">
-        <small>© 2025 Smart Steps</small>
+        <small>© 2026 Smart Steps</small>
     </footer>
 
     <!-- Bootstrap Offline -->
