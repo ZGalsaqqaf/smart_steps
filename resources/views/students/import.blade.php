@@ -30,7 +30,7 @@
                     @csrf
                     <div class="mb-3">
                         <label for="file" class="form-label">Choose CSV File</label>
-                        <input type="file" name="file" id="file" class="form-control" required>
+                        <input type="file" name="file" id="file" class="form-control" accept=".csv,.txt" required>
                     </div>
                     <button type="submit" class="btn btn-success">
                         🚀 Import Students

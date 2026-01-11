@@ -116,9 +116,9 @@ class StudentController extends Controller
     }
 
     public function showImportForm()
-{
-    return view('students.import');
-}
+    {
+        return view('students.import');
+    }
 
     public function importCSV(Request $request)
     {
@@ -131,15 +131,18 @@ class StudentController extends Controller
 
         while (($row = fgetcsv($file)) !== false) {
             if (empty($row[0])) continue; // تجاهل الصفوف الفارغة
-            Student::create([
-                'name'     => $row[0],
-                'grade_id' => $row[1],
-                'points'   => $row[2] ?? 0,
-            ]);
+            // تحديث أو إنشاء طالب جديد حسب الاسم
+            Student::updateOrCreate(
+                ['name' => $row[0]], // الشرط: الاسم لازم يكون unique
+                [
+                    'grade_id' => $row[1],
+                    'points'   => $row[2] ?? 0,
+                ]
+            );
         }
 
         fclose($file);
 
-        return redirect()->route('students.index')->with('success', 'Students imported successfully!');
+        return redirect()->route('students.index')->with('success', 'Successfully imported students: added {{ $newCount }} new and updated {{ $updatedCount }} existing.');
     }
 }
