@@ -8,7 +8,7 @@
     <div class="list-group mt-4">
         @forelse($attempts as $attempt)
             <div class="list-group-item">
-                <strong>Question:</strong> {{ $attempt->question->text }} <br>
+                <strong>Question:</strong> {{ $attempt->question->text ?? 'Manual points'}} <br>
                 <strong>Student:</strong> {{ $attempt->student->name }} <br>
                 <strong>Result:</strong>
                 @if($attempt->is_correct)
