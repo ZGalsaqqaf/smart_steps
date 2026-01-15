@@ -32,21 +32,48 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($students as $index => $student)
+            @php
+                $rank = 1; // العداد الذي يزيد لكل طالب
+                $displayRank = 1; // المركز المعروض
+                $prevPoints = null; // النقاط السابقة
+                $sameRankCount = 0; // عدد الطلاب الذين لديهم نفس الترتيب
+            @endphp
+
+            @forelse($students as $student)
+                @php
+                    $currentPoints = (int) ($student->points ?? 0);
+
+                    // إذا كانت هذه أول طالبة، أو إذا تغيرت النقاط
+                    if ($prevPoints === null || $currentPoints != $prevPoints) {
+                        // حساب الترتيب الجديد: العداد - عدد المتسابقين السابقين
+                        $displayRank = $rank - $sameRankCount;
+                        $sameRankCount = 0; // إعادة تعيين عداد المتساوين
+                    }
+
+                    // زيادة عداد المتساوين إذا كانت النقاط متساوية
+                    if ($prevPoints !== null && $currentPoints == $prevPoints) {
+                        $sameRankCount++;
+                    }
+
+                    $prevPoints = $currentPoints;
+                    $rank++; // زيادة العداد للطالب التالي
+                @endphp
+
                 <tr>
-                    <td style="width: 60px;"> {{-- نفس العرض للـ td --}}
-                        {{ $index + 1 }}
-                        @if ($index == 0)
-                            🥇
-                        @elseif($index == 1)
-                            🥈
-                        @elseif($index == 2)
-                            🥉
+                    <td style="width: 60px; text-align: center;">
+                        {{ $rank - 1 }}
+                        @if ($student->points > 0)
+                            @if ($displayRank == 1)
+                                🥇
+                            @elseif($displayRank == 2)
+                                🥈
+                            @elseif($displayRank == 3)
+                                🥉
+                            @endif
                         @endif
                     </td>
                     <td>{{ $student->name }}</td>
-                    <td>{{ $student->points ?? 0 }}</td>
-                    {{-- <td>{{ $student->totalPoints() }}</td> --}}
+                    <td>{{ $currentPoints }}</td>
                 </tr>
             @empty
                 <tr>
