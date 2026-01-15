@@ -57,7 +57,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Text</th>
-                    <th>points</th>
+                    <th>Points</th>
+                    <td>Status</td>
                     <th>Type</th>
                     <th>Grade</th>
                     <th>Category</th>
@@ -71,6 +72,7 @@
                         <td>{{ $question->id }}</td>
                         <td>{{ $question->text }}</td>
                         <td>{{ $question->default_points }}</td>
+                        <td>{{ $question->status }}</td>
                         <td>{{ $question->type }}</td>
                         <td>{{ $question->grade->name }}</td>
                         <td>{{ $question->category->name }}</td>

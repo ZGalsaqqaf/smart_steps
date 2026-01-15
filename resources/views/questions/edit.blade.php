@@ -16,12 +16,24 @@
                 @enderror
             </div>
 
+            {{-- Points --}}
             <div class="mb-3">
                 <label for="default_points" class="form-label">Points (1–5)</label>
                 <input type="number" name="default_points" id="default_points" class="form-control" min="1"
                     max="5" value="{{ old('default_points', $question->default_points ?? 1) }}">
             </div>
-            
+
+            <!-- Status -->
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <div class="form-check">
+                    <input type="checkbox" name="status" value="1" class="form-check-input"
+                        {{ old('status', $question->status) ? 'checked' : '' }}>
+                    <label class="form-check-label">Active</label>
+                </div>
+            </div>
+
+
             <!-- Type (read-only) -->
             <div class="mb-3">
                 <label class="form-label">Type</label>

@@ -64,7 +64,12 @@ class QuestionController extends Controller
 
         DB::beginTransaction();
         try {
-            $question = Question::create($request->only('text', 'type', 'category', 'grade_id', 'category_id', 'default_points'));
+            $data = $request->only('text', 'type', 'grade_id', 'category_id', 'default_points');
+
+            // إذا الـ checkbox محدد → 1، إذا غير محدد → 0
+            $data['status'] = $request->has('status') ? 1 : 0;
+
+            $question = Question::create($data);
 
             if ($request->type === 'true_false') {
                 Option::create([
@@ -144,7 +149,11 @@ class QuestionController extends Controller
 
         DB::beginTransaction();
         try {
-            $question->update($request->only('text', 'type', 'category', 'grade_id', 'category_id', 'default_points'));
+            // نجهز البيانات
+            $data = $request->only('text', 'type', 'grade_id', 'category_id', 'default_points');
+            $data['status'] = $request->has('status') ? 1 : 0;
+            // تحديث السؤال
+            $question->update($data);
 
             // نحذف الخيارات القديمة ونضيف الجديدة
             $question->options()->delete();
