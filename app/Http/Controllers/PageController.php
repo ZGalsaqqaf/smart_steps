@@ -20,7 +20,7 @@ class PageController extends Controller
             ->get();
 
         // أسئلة اليوم
-        $todaysQuestions = $grade->questions()
+        $todaysQuestions = $grade->questions()->active()
             ->whereDate('created_at', today())
             ->get();
 
@@ -71,6 +71,7 @@ class PageController extends Controller
     public function unsolvedQuestionsForGrade(Grade $grade)
     {
         return $grade->questions()
+            ->active()
             ->whereDoesntHave('attempts', function ($q) use ($grade) {
                 $q->where('is_correct', true)
                     ->whereHas('student', fn($s) => $s->where('grade_id', $grade->id));

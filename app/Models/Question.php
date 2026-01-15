@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
-    protected $guarded=['id', 'created_at'];
-    
+    protected $guarded = ['id', 'created_at'];
+
     public function grade()
     {
         return $this->belongsTo(Grade::class);
@@ -26,5 +26,10 @@ class Question extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function scopeActive($q)
+    {
+        return $q->where('status', true);
     }
 }

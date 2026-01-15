@@ -49,8 +49,19 @@ class AttemptController extends Controller
             $isCorrect = $correctOptions->contains(strtolower(trim($request->answer)));
         }
 
-        // حساب النقاط (مثلاً 5 نقاط للسؤال الصحيح)
-        $earnedPoints = $isCorrect ? ($question->default_points ?? 5) : 0;
+        // ✅ حساب النقاط
+        if ($isCorrect) {
+            // إذا صحيحة → تأخذ كامل النقاط
+            $earnedPoints = $question->default_points ?? 5;
+        } else {
+            // إذا خطأ → ننقص نقطة من قيمة السؤال
+            $newPoints = max(($question->default_points ?? 5) - 1, 0);
+            $earnedPoints = $newPoints;
+
+            // نحدث قيمة السؤال نفسها بحيث تقل المرة القادمة
+            $question->update(['default_points' => $newPoints]);
+        }
+
         Attempt::create([
             'student_id'    => $request->student_id,
             'question_id'   => $request->question_id,
@@ -59,11 +70,33 @@ class AttemptController extends Controller
             'earned_points' => $earnedPoints,
         ]);
 
+        // منطق الإبطال
+        $questionInactive = false;
+
+        if ($question->type === 'true_false') {
+            // يبطل فور أول خطأ
+            if (!$isCorrect) {
+                $question->update(['status' => false]);
+                $questionInactive = true;
+            }
+        } else {
+            // يبطل بعد ثاني خطأ
+            $wrongCount = Attempt::where('question_id', $question->id)
+                ->where('is_correct', false)
+                ->count();
+
+            if ($wrongCount >= 2) {
+                $question->update(['status' => false]);
+                $questionInactive = true;
+            }
+        }
+
         return response()->json([
             'success' => true,
             'is_correct' => $isCorrect,
             'earned_points' => $earnedPoints,
             'message' => $isCorrect ? 'Correct! 🎉' : 'Incorrect ❌',
+            'question_inactive' => $questionInactive, // ✅ جديد
         ]);
     }
 
