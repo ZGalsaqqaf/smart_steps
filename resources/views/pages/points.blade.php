@@ -1,4 +1,4 @@
-@extends('layouts.adminlayout')
+@extends('layouts.layout')
 
 @section('content')
     <div class="container mt-4">
@@ -42,7 +42,7 @@
                         <td>
                             <form action="{{ route('points.add', $student->id) }}" method="POST" class="d-inline">
                                 @csrf
-                                <input type="number" name="points" value="1" min="1" max="5"
+                                <input type="number" name="points" value="1" min="1" max="7"
                                     step="1" class="form-control d-inline w-25">
                                 <button type="submit" class="btn btn-success btn-sm">➕ Add</button>
                             </form>

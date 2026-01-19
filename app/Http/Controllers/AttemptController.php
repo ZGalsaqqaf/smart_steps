@@ -12,10 +12,24 @@ class AttemptController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $attempts = Attempt::with(['student', 'question'])->paginate(10);
-        return view('attempts.index', compact('attempts'));
+        $search = $request->input('search');
+        $negative = $request->input('negative'); // زر النقاط السالبة
+
+        $attempts = Attempt::with('student') // نفترض أن هناك علاقة student
+            ->when($search, function ($query, $search) {
+                $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            })
+            ->when($negative, function ($query) {
+                $query->where('earned_points', '<', 0);
+            })
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
+        return view('attempts.index', compact('attempts', 'search'));
     }
 
     /**

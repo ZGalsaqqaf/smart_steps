@@ -25,49 +25,38 @@
     <table class="table table-bordered mt-4">
         <thead class="table-success">
             <tr>
-                <th style="width: 60px;">#</th> {{-- عمود ضيق --}}
+                <th style="width: 60px;">#</th>
                 <th>👩‍🎓 Student</th>
                 <th>⭐ Points</th>
-                {{-- <th>⭐ Points</th> --}}
             </tr>
         </thead>
         <tbody>
             @php
-                $rank = 1; // العداد الذي يزيد لكل طالب
-                $displayRank = 1; // المركز المعروض
-                $prevPoints = null; // النقاط السابقة
-                $sameRankCount = 0; // عدد الطلاب الذين لديهم نفس الترتيب
+                $counter = 1; // loop counter
+                $denseRank = 1;
+                $prevPoints = null;
             @endphp
 
             @forelse($students as $student)
                 @php
                     $currentPoints = (int) ($student->points ?? 0);
-
-                    // إذا كانت هذه أول طالبة، أو إذا تغيرت النقاط
-                    if ($prevPoints === null || $currentPoints != $prevPoints) {
-                        // حساب الترتيب الجديد: العداد - عدد المتسابقين السابقين
-                        $displayRank = $rank - $sameRankCount;
-                        $sameRankCount = 0; // إعادة تعيين عداد المتساوين
+                    if ($prevPoints === null) {
+                        $denseRank = 1;
+                    } elseif ($currentPoints < $prevPoints) {
+                        $denseRank++;
                     }
-
-                    // زيادة عداد المتساوين إذا كانت النقاط متساوية
-                    if ($prevPoints !== null && $currentPoints == $prevPoints) {
-                        $sameRankCount++;
-                    }
-
                     $prevPoints = $currentPoints;
-                    $rank++; // زيادة العداد للطالب التالي
                 @endphp
 
                 <tr>
                     <td style="width: 60px; text-align: center;">
-                        {{ $rank - 1 }}
+                        {{ $counter }}
                         @if ($student->points > 0)
-                            @if ($displayRank == 1)
+                            @if ($denseRank == 1)
                                 🥇
-                            @elseif($displayRank == 2)
+                            @elseif($denseRank == 2)
                                 🥈
-                            @elseif($displayRank == 3)
+                            @elseif($denseRank == 3)
                                 🥉
                             @endif
                         @endif
@@ -75,6 +64,7 @@
                     <td>{{ $student->name }}</td>
                     <td>{{ $currentPoints }}</td>
                 </tr>
+                @php $counter++; @endphp
             @empty
                 <tr>
                     <td colspan="3" class="text-center text-muted">No students yet.</td>
